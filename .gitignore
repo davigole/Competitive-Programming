@@ -2,3 +2,5 @@ tempCodeRunnerFile.cpp
 *.exe
 .cph/
 .vscode/
+*.in
+*.out
