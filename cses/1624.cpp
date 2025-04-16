@@ -8,36 +8,25 @@ using namespace std;
 #define	   uset	 unordered_set
 #define	   pii	  pair<int, int>
 
+int output = 0;
 
-int out = 0;
-vi currQueens;
+bool col[8];
+bool diagTopRight[15];
+bool diagBottomLeft[15];
+bool reserved[8][8]; // [x][y]
 
-bool reserved[64]; // (y, x)
-
-bool isAttacked(int pos) {
-    for (int queen : currQueens) {
-        if ((queen % 8) == (pos % 8)) return true; // vertical line
-        else if (queen/8 == pos/8) return true; // horizontal line
-        else if (abs(queen/8 - pos/8) == abs((queen % 8) - (pos % 8))) return true; // diagonal line
-    }
-
-    return false;
-}
-
-void explore(int k, int last=-1) {
-    if (k == 8) {
-        out++;
+void explore(int y) {
+    if (y == 8) {
+        output++;
         return;
     }
 
-    for (int i=(last+1); i<64; i++) {
-        if (reserved[i]) continue;
-        if (!isAttacked(i)) {
-            currQueens.pb(i);
+    for (int x=0; x<8; x++) {
+        if (reserved[x][y] || col[x] || diagTopRight[x+y] || diagBottomLeft[y-x+7]) continue;
 
-            explore(k+1, i);
-            currQueens.pop_back();
-        }
+        col[x] = diagTopRight[x+y] = diagBottomLeft[y-x+7] = 1;
+        explore(y+1);
+        col[x] = diagTopRight[x+y] = diagBottomLeft[y-x+7] = 0;
     }
 }
 
@@ -49,10 +38,10 @@ int main() {
         for (int x=0; x<8; x++) {
             char c;
             cin >> c;
-            reserved[8*y + x] = (c == '*');
+            reserved[x][y] = (c == '*');
         }
     }
 
     explore(0);
-    cout << out;
+    cout << output;
 }
